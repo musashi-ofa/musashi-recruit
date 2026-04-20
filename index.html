@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>むさし整骨院グループ｜採用Instagram投稿作成ツール</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #C0272D;
+      --red-dark: #8B1A1F;
+      --red-light: #FAEAEA;
+      --red-border: #E07070;
+      --black: #1A1A1A;
+      --black-soft: #2C2C2C;
+      --gray-bg: #F4F4F4;
+      --card-bg: #FFFFFF;
+      --border: rgba(0,0,0,0.1);
+      --border-hover: rgba(0,0,0,0.25);
+      --text: #1A1A1A;
+      --text-sub: #666;
+      --radius: 10px;
+      --radius-lg: 14px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", sans-serif;
+      background: var(--gray-bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    /* ヘッダー */
+    .site-header {
+      background: var(--black);
+      padding: 0 20px;
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }
+    .site-header .logo {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .site-header .logo-mark {
+      width: 32px; height: 32px; background: var(--red);
+      border-radius: 6px; display: flex; align-items: center;
+      justify-content: center; font-weight: 700; font-size: 14px; color: #fff;
+    }
+    .site-header .logo-text {
+      font-size: 13px; font-weight: 600; color: #fff; line-height: 1.3;
+    }
+    .site-header .logo-text span {
+      display: block; font-size: 10px; font-weight: 400; color: #aaa;
+    }
+
+    .container { max-width: 640px; margin: 0 auto; padding: 24px 16px; }
+
+    /* 週間カレンダー */
+    .week-banner {
+      background: var(--black-soft);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      margin-bottom: 20px;
+    }
+    .week-banner h2 {
+      font-size: 11px; font-weight: 600; color: #aaa;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;
+    }
+    .week-days {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
+    }
+    .day-cell {
+      text-align: center; padding: 6px 2px; border-radius: 6px;
+      font-size: 10px; color: #888;
+    }
+    .day-cell .day-name { font-weight: 600; margin-bottom: 2px; }
+    .day-cell .day-type { font-size: 9px; }
+    .day-cell.active { background: var(--red); }
+    .day-cell.active .day-name, .day-cell.active .day-type { color: #fff; }
+    .day-cell.rest { background: rgba(255,255,255,0.05); }
+
+    /* セクションラベル */
+    .slabel {
+      font-size: 11px; font-weight: 600; color: var(--text-sub);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin: 20px 0 8px;
+    }
+
+    /* カード */
+    .card {
+      background: var(--card-bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-bottom: 10px;
+    }
+
+    .field { margin-bottom: 14px; }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: block; font-size: 13px; color: var(--text-sub);
+      margin-bottom: 6px; font-weight: 500;
+    }
+    .req { color: var(--red); margin-left: 2px; }
+
+    .field input, .field textarea, .field select {
+      width: 100%; padding: 9px 13px; font-size: 14px;
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--gray-bg);
+      color: var(--text);
+      font-family: inherit;
+      transition: border-color 0.15s;
+      appearance: none;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      outline: none; border-color: var(--red); background: #fff;
+    }
+    .field textarea { resize: vertical; min-height: 80px; line-height: 1.65; }
+    .char-count { font-size: 11px; color: var(--text-sub); text-align: right; margin-top: 3px; }
+
+    /* 音声入力ボタン */
+    .mic-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; font-size: 12px; font-weight: 500;
+      border: 0.5px solid var(--border); border-radius: var(--radius);
+      background: #fff; color: var(--text-sub);
+      cursor: pointer; margin-top: 6px; transition: all 0.15s;
+    }
+    .mic-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+    .mic-btn.recording { background: var(--red-light); color: var(--red); border-color: var(--red-border); }
+
+    /* トグル */
+    .toggle-row { display: flex; gap: 8px; }
+    .tbtn {
+      flex: 1; padding: 9px 8px; font-size: 13px; font-weight: 500;
+      border: 0.5px solid var(--border); border-radius: var(--radius);
+      background: var(--gray-bg); color: var(--text-sub);
+      cursor: pointer; text-align: center; transition: all 0.15s;
+    }
+    .tbtn.active { background: var(--black); color: #fff; border-color: var(--black); }
+
+    /* 投稿タイプタグ */
+    .tag-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;
+    }
+    .tag {
+      padding: 10px 12px; font-size: 12px; font-weight: 500;
+      border: 0.5px solid var(--border); border-radius: var(--radius);
+      background: var(--gray-bg); color: var(--text-sub);
+      cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .tag .tag-icon { font-size: 16px; }
+    .tag .tag-label { line-height: 1.3; }
+    .tag .tag-sub { font-size: 10px; color: #aaa; display: block; margin-top: 1px; }
+    .tag.active {
+      background: var(--red-light); color: var(--red-dark);
+      border-color: var(--red-border);
+    }
+    .tag.active .tag-sub { color: var(--red); }
+
+    .divider { border: none; border-top: 0.5px solid var(--border); margin: 14px 0; }
+
+    /* 生成ボタン */
+    .gen-btn {
+      width: 100%; padding: 15px; font-size: 15px; font-weight: 700;
+      background: var(--red); color: #fff; border: none;
+      border-radius: var(--radius-lg); cursor: pointer;
+      transition: background 0.15s; margin-top: 6px;
+      letter-spacing: 0.03em;
+    }
+    .gen-btn:hover { background: var(--red-dark); }
+    .gen-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+    /* 出力エリア */
+    #output-area { margin-top: 16px; }
+
+    .out-header {
+      background: var(--black);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .out-header-title { font-size: 13px; font-weight: 600; color: #fff; }
+    .out-header-badge {
+      font-size: 11px; background: var(--red); color: #fff;
+      padding: 3px 10px; border-radius: 20px; font-weight: 600;
+    }
+    .out-body {
+      background: var(--card-bg);
+      border: 0.5px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+      overflow: hidden;
+    }
+    .out-section { padding: 16px 18px; border-bottom: 0.5px solid var(--border); }
+    .out-section:last-child { border-bottom: none; }
+    .out-label {
+      font-size: 11px; font-weight: 600; color: var(--text-sub);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .out-label-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--red); }
+    .out-text {
+      font-size: 14px; color: var(--text);
+      line-height: 1.8; white-space: pre-wrap;
+    }
+    .out-text.hashtag { color: #1877c8; }
+    .copy-btn {
+      margin-top: 10px; padding: 5px 14px; font-size: 12px;
+      border: 0.5px solid var(--border); border-radius: var(--radius);
+      background: var(--gray-bg); color: var(--text-sub);
+      cursor: pointer; transition: all 0.15s; font-weight: 500;
+    }
+    .copy-btn.copied { background: var(--red-light); color: var(--red); border-color: var(--red-border); }
+
+    /* Canvaボタン */
+    .canva-section { padding: 16px 18px; background: #fafafa; }
+    .canva-title { font-size: 12px; font-weight: 600; color: var(--text-sub); margin-bottom: 8px; }
+    .canva-desc { font-size: 12px; color: var(--text-sub); margin-bottom: 10px; line-height: 1.6; }
+    .canva-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 18px; font-size: 13px; font-weight: 700;
+      background: #7B2FF7; color: #fff; border: none;
+      border-radius: var(--radius); cursor: pointer;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .canva-btn:hover { background: #6320d4; }
+
+    /* ローディング */
+    .loading {
+      display: flex; align-items: center; gap: 10px;
+      padding: 28px 18px; color: var(--text-sub); font-size: 14px;
+    }
+    .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--red); animation: pulse 1.2s infinite;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes pulse { 0%,80%,100%{opacity:0.2}40%{opacity:1} }
+
+    /* エラー */
+    .error-box {
+      background: var(--red-light); border: 0.5px solid var(--red-border);
+      border-radius: var(--radius); padding: 14px;
+      font-size: 13px; color: var(--red-dark); line-height: 1.65; margin: 16px 0;
+    }
+
+    /* スクロール先 */
+    #scroll-target { scroll-margin-top: 70px; }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">
+    <div class="logo-mark">M</div>
+    <div class="logo-text">
+      むさし整骨院グループ
+      <span>採用 Instagram 投稿作成ツール</span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- 投稿スケジュール -->
+  <div class="week-banner">
+    <h2>週間投稿スケジュール</h2>
+    <div class="week-days">
+      <div class="day-cell rest"><div class="day-name">月</div><div class="day-type">休み</div></div>
+      <div class="day-cell active"><div class="day-name">火</div><div class="day-type">投稿</div></div>
+      <div class="day-cell active"><div class="day-name">水</div><div class="day-type">投稿</div></div>
+      <div class="day-cell rest"><div class="day-name">木</div><div class="day-type">休み</div></div>
+      <div class="day-cell active"><div class="day-name">金</div><div class="day-type">投稿</div></div>
+      <div class="day-cell active"><div class="day-name">土</div><div class="day-type">投稿</div></div>
+      <div class="day-cell active"><div class="day-name">日</div><div class="day-type">投稿</div></div>
+    </div>
+  </div>
+
+  <!-- 投稿タイプ -->
+  <div class="slabel">投稿タイプを選ぶ</div>
+  <div class="card">
+    <div class="tag-grid" id="type-tags">
+      <div class="tag active" data-val="仕事紹介" data-desc="施術内容・1日の流れ">
+        <span class="tag-icon">💼</span>
+        <span class="tag-label">仕事紹介<span class="tag-sub">施術内容・1日の流れ</span></span>
+      </div>
+      <div class="tag" data-val="先輩スタッフ紹介" data-desc="入社理由・やりがい">
+        <span class="tag-icon">👤</span>
+        <span class="tag-label">先輩スタッフ紹介<span class="tag-sub">入社理由・やりがい</span></span>
+      </div>
+      <div class="tag" data-val="職場環境・雰囲気" data-desc="院内・チーム・イベント">
+        <span class="tag-icon">🏥</span>
+        <span class="tag-label">職場環境・雰囲気<span class="tag-sub">院内・チーム・イベント</span></span>
+      </div>
+      <div class="tag" data-val="待遇・制度紹介" data-desc="給与・研修・資格支援">
+        <span class="tag-icon">📋</span>
+        <span class="tag-label">待遇・制度紹介<span class="tag-sub">給与・研修・資格支援</span></span>
+      </div>
+      <div class="tag" data-val="採用イベント告知" data-desc="院見学・オンライン面談">
+        <span class="tag-icon">📅</span>
+        <span class="tag-label">採用イベント告知<span class="tag-sub">院見学・オンライン面談</span></span>
+      </div>
+      <div class="tag" data-val="会社理念・ビジョン" data-desc="常笑・常昇・常勝">
+        <span class="tag-icon">🔥</span>
+        <span class="tag-label">会社理念・ビジョン<span class="tag-sub">常笑・常昇・常勝</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- フォーマット -->
+  <div class="slabel">フォーマット</div>
+  <div class="card">
+    <div class="toggle-row">
+      <div class="tbtn active" id="btn-feed" onclick="setFmt('フィード（カルーセル）')">
+        フィード（カルーセル）
+      </div>
+      <div class="tbtn" id="btn-reel" onclick="setFmt('リール')">
+        リール
+      </div>
+    </div>
+  </div>
+
+  <!-- 投稿詳細 -->
+  <div class="slabel">投稿の詳細</div>
+  <div class="card">
+    <div class="field">
+      <label>伝えたいこと・テーマ<span class="req">*</span></label>
+      <textarea id="theme" placeholder="例：新卒1年目の1日の流れを紹介したい、研修制度の充実さを伝えたい、など" oninput="uc(this,'tc',150)"></textarea>
+      <div class="char-count" id="tc">0 / 150</div>
+      <button class="mic-btn" id="mic-theme" onclick="voice('theme','mic-theme')">
+        <span class="mic-dot"></span>音声入力
+      </button>
+    </div>
+    <hr class="divider">
+    <div class="field">
+      <label>担当者名・院名（任意）</label>
+      <input type="text" id="staff" placeholder="例：採用担当 弓、むさし整骨院川久保院など" />
+    </div>
+    <div class="field">
+      <label>その他メモ（任意）</label>
+      <textarea id="memo" placeholder="強調したいポイント、実際のエピソード、使いたいキーワードなど" style="min-height:60px;" oninput="uc(this,'mc',150)"></textarea>
+      <div class="char-count" id="mc">0 / 150</div>
+      <button class="mic-btn" id="mic-memo" onclick="voice('memo','mic-memo')">
+        <span class="mic-dot"></span>音声入力
+      </button>
+    </div>
+  </div>
+
+  <button class="gen-btn" id="gen-btn" onclick="generate()">投稿コンテンツを作成する</button>
+  <div id="scroll-target"></div>
+  <div id="output-area"></div>
+
+</div>
+
+<script>
+// ---- 会社情報（システムプロンプト用） ----
+const COMPANY_INFO = `
+【会社情報】
+会社名：株式会社ONE FOR ALL（むさし整骨院グループ）
+代表：十亀誠治
+所在地：福岡県大野城市中3-1-40
+直営店舗：35店舗（福岡・佐賀・長崎・大分・鹿児島・沖縄・兵庫）
+年商：17.5億円（2026年）/ 目標：2030年100億円
+
+【ミッション】
+「ONE FOR ALLに関わる全ての人々を笑顔にするために、最高の技術と空間を提供し続けます」
+
+【会社理念・スローガン】
+・常笑・常昇・常勝
+・「業界の洗濯機になろう」〜人の心を洗うこと〜
+・志を継ぐ成功者を育てる
+
+【Our Value】
+・お客様：ホスピタリティと感謝の気持ちを忘れず、プラスアルファの感動を与える
+・技術：自ら学び続け、最先端の技術・医療設備で信頼と共感を築く
+・パートナー：お互いに尊敬と威厳をもって接し、多様性を受け入れ、働きやすい環境を全員で作る
+
+【求人情報（2026年最新）】
+・募集職種：柔道整復師・鍼灸師（国家資格取得予定者含む）
+・雇用形態：正社員
+・給与（九州エリア柔整）：基本給202,088円＋資格手当10,000円＋調整手当10,000円＋固定残業手当43,560円＝総支給265,648円
+・給与（W免許）：総支給271,629円
+・賞与：年2回（業績による）　一般：4万〜33万、副院長：7万〜39万、院長：16万〜57万
+・昇給：年2回（昇給チャレンジ制）
+・休日：週休2日（月曜＋1日）、年間休日114日以上
+・休暇：GW3〜5日、夏季休暇3〜5日、年末年始5〜7日、リフレッシュ休暇3日
+・有給：入社6ヶ月後に10日
+・試用期間：6ヶ月（同条件）
+・社会保険：健康・厚生・雇用・労災
+
+【研修・教育制度】
+・入社後1ヶ月：本部（福岡）で基礎研修（知識・施術スキル・院内接客）
+・定期勉強会・院外セミナー（費用全額会社負担）
+・資格取得支援制度・奨学金返還支援制度
+
+【福利厚生】
+・産休・育休取得実績あり
+・社員旅行・全社員合同イベント（大忘年会・BBQ大会）
+・社内表彰制度
+・社割（家族の施術無料、物販割引）
+・開業支援制度
+・引越し補助あり（面接時相談）
+
+【求める人物像】
+・人に喜んでもらうのが好きな方
+・常に成長を求めている方
+・人とは違う人生を歩みたい方（独立起業・スペシャリスト・アスリートトレーナー等）
+・挑戦し続ける方
+・夢を持っている方
+
+【施術内容】
+・保険施術（柔整・鍼灸）、カウンセリング、生活指導
+・筋肉アプローチ：筋肉調整、猫背調整、ハイボルテージ
+・骨格アプローチ：骨盤プログラム（トムソン施術）、MIインパクト、EMS（楽トレ）、産後骨盤引き締め
+・神経アプローチ：自律神経施術、脊柱トムソン施術
+・自費施術：美容鍼、パルス、鍼灸全身調整
+
+【採用連絡先】
+採用HP：https://www.musashi-recruit.com/
+メール：634.recruit@gmail.com
+採用担当：人事部長 弓 憲史
+`;
+
+// ---- ステート ----
+let selType = '仕事紹介';
+let selFmt = 'フィード（カルーセル）';
+let activeRec = null;
+
+// ---- タグ選択 ----
+document.querySelectorAll('#type-tags .tag').forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll('#type-tags .tag').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    selType = t.dataset.val;
+  };
+});
+
+// ---- フォーマット切替 ----
+function setFmt(f) {
+  selFmt = f;
+  document.getElementById('btn-feed').classList.toggle('active', f === 'フィード（カルーセル）');
+  document.getElementById('btn-reel').classList.toggle('active', f === 'リール');
+}
+
+// ---- 文字カウント ----
+function uc(el, id, max) {
+  document.getElementById(id).textContent = el.value.length + ' / ' + max;
+}
+
+// ---- 音声入力 ----
+function voice(fieldId, btnId) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('このブラウザは音声入力に対応していません。Chromeをお試しください。'); return; }
+  const btn = document.getElementById(btnId);
+  if (btn.classList.contains('recording')) {
+    if (activeRec) { try { activeRec.stop(); } catch(e){} }
+    return;
+  }
+  const rec = new SR();
+  rec.lang = 'ja-JP'; rec.interimResults = false;
+  activeRec = rec;
+  btn.classList.add('recording');
+  btn.innerHTML = '<span class="mic-dot"></span>録音中…（もう一度押すと停止）';
+  rec.onresult = e => {
+    const field = document.getElementById(fieldId);
+    field.value = (field.value ? field.value + ' ' : '') + e.results[0][0].transcript;
+    uc(field, fieldId === 'theme' ? 'tc' : 'mc', 150);
+  };
+  rec.onend = () => {
+    btn.classList.remove('recording');
+    btn.innerHTML = '<span class="mic-dot"></span>音声入力';
+    activeRec = null;
+  };
+  rec.start();
+}
+
+// ---- プロンプト生成 ----
+function buildPrompt() {
+  const theme = document.getElementById('theme').value.trim();
+  const staff = document.getElementById('staff').value.trim();
+  const memo  = document.getElementById('memo').value.trim();
+
+  const feedInst = `フィードカルーセル投稿（5枚構成）として、以下のスライドテキスト素材・キャプション・ハッシュタグを作成してください。
+
+## スライド1：表紙
+見出し：採用・職場魅力を伝えるキャッチコピー（20字以内）
+サブ：興味を引くひと言（25字以内）
+
+## スライド2：現状・共感
+見出し：求職者の気持ちに寄り添う問いかけ（20字以内）
+本文：こんな悩みや希望はありませんか？という内容を2〜3点（各25字以内）
+
+## スライド3：むさしの答え・特徴
+見出し：当グループならではの魅力（20字以内）
+本文：具体的なポイントを2〜3点（各30字以内）
+
+## スライド4：証拠・詳細
+見出し：数字や制度で裏づける（20字以内）
+本文：給与・研修・休日・福利厚生などの具体的情報を2〜3点（各30字以内）
+
+## スライド5：クロージング
+見出し：行動を促すやさしい呼びかけ（20字以内）
+サブ：応募・見学への一歩を後押しするひと言（30字以内）
+採用HP：https://www.musashi-recruit.com/
+
+## キャプション（本文）
+200〜350字。ターゲット（柔整・鍼灸の学生・既卒）に寄り添う書き出しで始め、魅力を伝え、応募を促すCTAで締める。
+
+## ハッシュタグ
+#むさし整骨院 #整骨院求人 #柔道整復師求人 を必ず含め、テーマ別6〜9個追加。`;
+
+  const reelInst = `リール投稿として台本・キャプション・ハッシュタグを作成してください。
+
+## リール台本
+【冒頭 0〜3秒】（求職者が思わず止まる一言テロップ）
+【中盤〜25秒】（3〜4ステップで魅力を伝えるテロップ構成）
+【締め〜30秒】（CTA・採用HP・グループ名）
+
+## キャプション（本文）
+150〜250字。テンポよく、求職者の心に刺さる内容で。
+
+## ハッシュタグ
+#むさし整骨院 #整骨院求人 #柔道整復師求人 を必ず含め、テーマ別6〜9個追加。`;
+
+  return `あなたは「むさし整骨院グループ（株式会社ONE FOR ALL）」の採用Instagram投稿制作担当です。
+以下の会社情報をもとに、求職者（柔道整復師・鍼灸師の学生・既卒・転職希望者）に響く投稿を作成してください。
+
+${COMPANY_INFO}
+
+【今回の投稿情報】
+投稿タイプ：${selType}
+フォーマット：${selFmt}
+伝えたいこと：${theme}
+担当者・院名：${staff || 'なし'}
+メモ：${memo || 'なし'}
+
+【トーン・ルール】
+・明るく前向き、でも誠実さが伝わる文体
+・学生・若い求職者が「ここで働きたい！」と思えるような言葉選び
+・理念（常笑・常昇・常勝）や会社の熱量が伝わる表現を自然に盛り込む
+・「絶対」「必ず」「No.1」などの断定・誇大表現は使わない
+・採用HPのURLは https://www.musashi-recruit.com/
+
+${selFmt === 'リール' ? reelInst : feedInst}`;
+}
+
+// ---- 投稿生成 ----
+async function generate() {
+  const theme = document.getElementById('theme').value.trim();
+  if (!theme) { alert('伝えたいこと・テーマを入力してください'); return; }
+
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true; btn.textContent = '生成中...';
+
+  const area = document.getElementById('output-area');
+  area.innerHTML = `<div style="background:var(--card-bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);margin-top:4px;">
+    <div class="loading">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      <span>投稿コンテンツを生成しています...</span>
+    </div>
+  </div>`;
+  document.getElementById('scroll-target').scrollIntoView({ behavior: 'smooth' });
+
+  try {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: buildPrompt() })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'エラーが発生しました');
+    renderOutput(data.text);
+  } catch(e) {
+    area.innerHTML = `<div class="error-box">エラーが発生しました：${e.message}<br>しばらくしてから再度お試しください。</div>`;
+  }
+
+  btn.disabled = false; btn.textContent = '投稿コンテンツを作成する';
+}
+
+// ---- 出力レンダリング ----
+function renderOutput(text) {
+  const area = document.getElementById('output-area');
+  const typeLabel = selType;
+  const fmtLabel  = selFmt;
+
+  const sections = [];
+
+  if (selFmt === 'フィード（カルーセル）') {
+    const labels = ['表紙', '現状・共感', 'むさしの特徴', '証拠・詳細', 'クロージング'];
+    for (let i = 1; i <= 5; i++) {
+      const re = new RegExp(`##\\s*スライド${i}[^\\n]*\\n([\\s\\S]*?)(?=##\\s*スライド${i+1}|##\\s*キャプション|$)`);
+      const m = text.match(re);
+      if (m) sections.push({ title: `スライド${i}：${labels[i-1]}`, id: `s${i}`, content: m[1].trim() });
+    }
+  } else {
+    const m = text.match(/##\s*リール台本[^\n]*\n([\s\S]*?)(?=##\s*キャプション|$)/);
+    if (m) sections.push({ title: 'リール台本', id: 'script', content: m[1].trim() });
+  }
+
+  const capM  = text.match(/##\s*キャプション[^\n]*\n([\s\S]*?)(?=##\s*ハッシュタグ|$)/);
+  const hashM = text.match(/##\s*ハッシュタグ[^\n]*\n([\s\S]*?)(?=##|$)/);
+  if (capM)  sections.push({ title: 'キャプション（本文）', id: 'cap', content: capM[1].trim() });
+  if (hashM) sections.push({ title: 'ハッシュタグ', id: 'hash', content: hashM[1].trim(), isHash: true });
+  if (!sections.length) sections.push({ title: '生成結果', id: 'all', content: text });
+
+  const canvaUrl = selFmt === 'リール'
+    ? 'https://www.canva.com/search/templates?q=instagram+reel'
+    : 'https://www.canva.com/search/templates?q=instagram+%E6%8A%95%E7%A8%BF';
+
+  let html = `<div>
+    <div class="out-header">
+      <span class="out-header-title">${typeLabel}｜${fmtLabel}</span>
+      <span class="out-header-badge">生成完了</span>
+    </div>
+    <div class="out-body">`;
+
+  sections.forEach(s => {
+    html += `<div class="out-section">
+      <div class="out-label"><span class="out-label-dot"></span>${s.title}</div>
+      <div class="out-text${s.isHash ? ' hashtag' : ''}" id="${s.id}">${esc(s.content)}</div>
+      <button class="copy-btn" onclick="copyText('${s.id}',this)">コピー</button>
+    </div>`;
+  });
+
+  html += `<div class="canva-section">
+    <div class="canva-title">Canvaでデザインする</div>
+    <div class="canva-desc">クリックするとCanvaのテンプレート検索が開きます。テンプレートを選んで上記テキストを貼り付けてください。</div>
+    <a href="${canvaUrl}" target="_blank" rel="noopener" class="canva-btn">Canvaで開く →</a>
+  </div>`;
+
+  html += `</div></div>`;
+  area.innerHTML = html;
+}
+
+// ---- ユーティリティ ----
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+function copyText(id, btn) {
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => {
+    btn.textContent = 'コピー完了！';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'コピー'; btn.classList.remove('copied'); }, 1800);
+  });
+}
+</script>
+</body>
+</html>
